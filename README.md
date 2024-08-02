@@ -57,11 +57,6 @@ This repository contains code and data for generating spectral data using the Mi
 - **mitsubaspectral.ipynb**: A general notebook for spectral data generation.
 
 ### Additional Files
-### `extracted_blue.py`, `extracted_green.py`, `extracted_red.py`
-These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate the individual color channels separately.
-
-### `first_sample.pth` and `second_sample.pth`
-These files contain PyTorch tensor data for the first and second samples used for evaluation. They are loaded and compared using the `new_eval.py` script.
 
 - **Splatfactor/**:
   - **extracted_blue.py**: Extracts and processes the blue channel data.
@@ -72,10 +67,15 @@ These files contain PyTorch tensor data for the first and second samples used fo
   - **second_sample.pth**: PyTorch tensor file containing the second sample.
   - **splatfacto.py**: Contains the implementation of the `SplatfactoModel` for Gaussian Splatting.
 - **lego/**: Contains the `cbox.xml` scene file, along with all necessary Lego meshes and textures for rendering.
-- **my_first_render.png**: Example render image.
-- **pexels-fwstudio-33348-172289.jpg**: Reference image used in the project.
-## Spectral Sensitivity Curve
+- **pexels-fwstudio-33348-172289.jpg**: Image used as a background texture for the LEGO model.
 
+### `extracted_blue.py`, `extracted_green.py`, `extracted_red.py`
+These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate the individual color channels separately.
+
+### `first_sample.pth` and `second_sample.pth`
+These files contain PyTorch tensor data for the first and second samples used for evaluation. They are loaded and compared using the `new_eval.py` script.
+
+## Spectral Sensitivity Curve
 The spectral sensitivity of the TOUCAN Multispectral Camera is defined by a set of Gaussian functions representing different spectral bands. The following Python code in `Gaussian-like-curve.ipynb` generates and plots these sensitivity curves:
 
 ```python
