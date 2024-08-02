@@ -12,7 +12,6 @@ This repository contains code for generating spectral data (Inidividual and Enco
 │   ├── first_sample.pth
 │   ├── new_eval.py
 │   ├── second_sample.pth
-│   └── splatfacto.py
 ├── _MACOSX/lego/
 ├── lego/
 │   ├── cbox.xml
@@ -58,9 +57,8 @@ This repository contains code for generating spectral data (Inidividual and Enco
   - **extracted_green.py**: Extracts and processes the green channel data.
   - **extracted_red.py**: Extracts and processes the red channel data.
   - **first_sample.pth**: PyTorch tensor file containing the first sample.
+  - - **second_sample.pth**: PyTorch tensor file containing the second sample.
   - **new_eval.py**: Evaluation script to compare two samples using PSNR, SSIM, and LPIPS metrics.
-  - **second_sample.pth**: PyTorch tensor file containing the second sample.
-  - **splatfacto.py**: Contains the implementation of the `SplatfactoModel` for Gaussian Splatting.
 - **lego/**: Contains the `cbox.xml` scene file, along with all necessary Lego meshes and textures for rendering.
 - **pexels-fwstudio-33348-172289.jpg**: Image used as a background texture for the LEGO model.
 
@@ -177,7 +175,7 @@ print(f"Rendered images saved to: {folder_name}")
 
 ### Replicate the R Channel in B and G Channels for Both Ground Truth and Predicted Images
 
-In the `splatfacto.py` file, there is a method that replicates the R channel in the B and G channels for both ground truth and predicted images. This is done to facilitate certain image quality assessments and evaluation.
+In the `splatfacto.py` file, the method that replicates the R channel in the B and G channels for both ground truth and predicted images is presented. This is done to facilitate certain image quality assessments and evaluation.
 
 Here is the relevant function with the corresponding extraction logic:
 
@@ -232,11 +230,11 @@ This method:
 2. Replicates the R channel across the green (G) and blue (B) channels.
 3. Combines the ground truth and predicted images side-by-side.
 4. Computes PSNR, SSIM, and LPIPS metrics for the images.
-5. Returns a dictionary containing the metrics and the combined image.
 
 
 ## Sample Code For Comparing only the predicted output as saved Tensors 
-The  `new_eval.py` script is used to compare two samples (stored in `first_sample.pth` and `second_sample.pth`) using three image quality metrics: PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index Measure), and LPIPS (Learned Perceptual Image Patch Similarity). The script loads the samples, computes the metrics, and visualizes the results using a bar plot.
+The  `new_eval.py` script is used to compare two samples (both predicted) for two different training instance (stored in `first_sample.pth` and `second_sample.pth`) using three image quality metrics: PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index Measure), and LPIPS (Learned Perceptual Image Patch Similarity). The script loads the samples, computes the metrics, and visualizes the results.
+
 Here is the `new_eval.py` script:
 
 ```python
@@ -276,12 +274,10 @@ for i, value in enumerate(values):
 
 plt.show()
 ```
-
+While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. The primary reason for this is that PSNR and SSIM is traditionally used to measure the fidelity of a reconstructed image with respect to a ground truth reference. When both images are reconstructions or predictions, there is no absolute reference to determine the true quality of either image, making PSNR less meaningful in this context.
 
 
 ## Acknowledgements
 
 - [Mitsuba Renderer](https://www.mitsuba-renderer.org/) for providing the rendering framework.
 - [Nerfstudio](https://docs.nerf.studio/) for providing the foundational code and concepts used in the `splatfacto.py` implementation.
-
-
