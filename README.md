@@ -282,6 +282,6 @@ plt.show()
 ## Acknowledgements
 
 - [Mitsuba Renderer](https://www.mitsuba-renderer.org/) for providing the rendering framework.
-- [Nerfstudio](https://nerfstudio.github.io/) for providing the foundational code and concepts used in the `splatfacto.py` implementation.
+- [Nerfstudio](https://docs.nerf.studio/) for providing the foundational code and concepts used in the `splatfacto.py` implementation.
 
 
