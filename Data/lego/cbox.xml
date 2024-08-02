@@ -1,0 +1,3723 @@
+<scene version="3.0.0">
+    <default name="res" value="2000"/>
+	<default name="spp" value="2000"/>
+    <default name="max_depth" value="6"/>
+    <default name="integrator" value="path"/>
+
+    <integrator type='$integrator'>
+        <integer name="max_depth" value="$max_depth"/>
+    </integrator>
+
+    <sensor type="perspective" id="sensor">
+        <string name="fov_axis" value="smaller"/>
+        <float name="near_clip" value="0.001"/>
+        <float name="far_clip" value="100.0"/>
+        <float name="focus_distance" value="1000"/>
+        <float name="fov" value="39.3077"/>
+        <transform name="to_world">
+            <lookat origin="0,  0,  4"
+                    target="0,  0,  0"
+                    up    ="0,  1,  0"/>
+        </transform>
+        <sampler type="independent">
+            <integer name="sample_count" value="$spp"/>
+        </sampler>
+        <!-- <film type="specfilm"> -->
+            <!-- <integer name="width"  value="$res"/> -->
+            <!-- <integer name="height" value="$res"/> -->
+			<!-- <spectrum name="Band1" value="400.0:0.01, 415.0:0.15, 431.0:0.36, 445.0:0.15, 460.0:0.01"/> -->
+            <!-- <rfilter type="box"/> -->
+            <!-- <string name="pixel_format" value="rgb"/> -->
+            <!-- <string name="component_format" value="float32"/> -->
+        <!-- </film> -->
+    </sensor>
+
+    <!-- BSDFs -->
+    <bsdf type="diffuse" id="gray">
+        <!-- <rgb name="reflectance" value="0.85, 0.85, 0.85"/> -->
+		<spectrum name="reflectance" value="400:0.85, 500:0.85, 600:0.85, 700:0.85, 800:0.85, 900:0.85"/>
+    </bsdf>
+
+    <bsdf type="diffuse" id="white">
+        <!-- <rgb name="reflectance" value="0.885809, 0.698859, 0.666422"/> -->
+		<spectrum name="reflectance" value="400:0.885809, 500:0.698859, 600:0.666422, 700:0.666422, 800:0.666422, 900:0.666422"/>
+    </bsdf>
+
+    <bsdf type="diffuse" id="green">
+        <!-- <rgb name="reflectance" value="0.105421, 0.37798, 0.076425"/> -->
+		<spectrum name="reflectance" value="400:0.105421, 500:0.37798, 600:0.076425, 700:0.076425, 800:0.076425, 900:0.076425"/>
+    </bsdf>
+
+    <bsdf type="diffuse" id="red">
+        <!-- <rgb name="reflectance" value="0.570068, 0.0430135, 0.0443706"/> -->
+		<spectrum name="reflectance" value="400:0.570068, 500:0.0430135, 600:0.0443706, 700:0.0443706, 800:0.0443706, 900:0.0443706"/>
+    </bsdf>
+
+	<!-- Texture -->
+	<bsdf type="diffuse" id="my_textured_material">
+        <texture type="bitmap" name="reflectance">
+            <string name="filename" value="pexels-fwstudio-33348-172289.jpg"/>
+        </texture>
+	</bsdf>
+
+    <!-- Light -->
+    <shape type="obj" id="light">
+        <string name="filename" value="meshes/cbox_luminaire.obj"/>
+        <transform name="to_world">
+            <translate x="0" y="-0.01" z="0"/>
+        </transform>
+        <ref id="white"/>
+        <emitter type="area">
+            <spectrum name="radiance" value="400:18.387, 500:13.9873, 600:6.75357 700:6.75357, 800:6.75357, 900:6.75357"/>
+        </emitter>
+    </shape>
+
+	<!-- Constant Emitter -->
+	<emitter type="constant">
+    	<spectrum name="radiance" value="0.7"/>
+	</emitter>
+
+    <!-- Shapes -->
+<shape type="obj" id="floor">
+    <transform name="to_world">
+        <scale value="3.5"/>
+    </transform>
+    <string name="filename" value="meshes/cbox_floor.obj"/>
+    <!-- <ref id="white"/> -->
+	<ref id="my_textured_material"/>
+</shape>
+
+<shape type="obj" id="ceiling">
+    <transform name="to_world">
+        <scale value="3.5"/>
+    </transform>
+    <string name="filename" value="meshes/cbox_ceiling.obj"/>
+    <ref id="white"/>
+</shape>
+
+<shape type="obj" id="back">
+    <transform name="to_world">
+        <scale value="3.5"/>
+    </transform>
+    <string name="filename" value="meshes/cbox_back.obj"/>
+    <ref id="white"/>
+</shape>
+<shape type="obj" id="greenwall">
+    <transform name="to_world">
+        <scale value="3.5"/>
+    </transform>
+    <string name="filename" value="meshes/cbox_greenwall.obj"/>
+    <!-- <ref id="my_textured_material"/> -->
+	<ref id="green"/>
+</shape>
+
+<shape type="obj" id="redwall">
+    <transform name="to_world">
+        <scale value="3.5"/>
+    </transform>
+    <string name="filename" value="meshes/cbox_redwall.obj"/>
+    <ref id="red"/>
+</shape>
+
+    <!-- New Materials -->
+	<bsdf type="diffuse"  id="main-bsdf">
+        <texture type="volume" name="reflectance">
+            <volume type="gridvolume" name="volume">
+                <string name="filename" value="textures/red.vol"/>
+            </volume>
+        </texture>
+	</bsdf>
+
+	<bsdf type="diffuse" id="empty-emitter-bsdf">
+		<!-- <rgb value="0.000000" name="reflectance"/> -->
+		<spectrum value="0.000000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="twosided" id="mat-Gray">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.296138 0.323143 0.391572" name="reflectance"/> -->
+			<spectrum value="400:0.296138 500:0.323143 600:0.391572 700:0.391572 800:0.391572 900:0.391572 " name="reflectance"/>
+
+		</bsdf>
+	</bsdf>
+	<bsdf type="twosided" id="mat-transparent">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.162644 0.162644 0.162644" name="reflectance"/> -->
+			<spectrum value="400:0.162644 500:0.162644 600:0.162644 700:0.162644 800:0.162644 900:0.162644" name="reflectance"/>
+
+		</bsdf>
+	</bsdf>
+	<bsdf type="twosided" id="mat-Black">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.002808 0.002808 0.002808" name="reflectance"/> -->
+			<spectrum value="400:0.002808 500:0.002808 600:0.002808 700:0.002808 800:0.002808 900:0.002808" name="reflectance"/>
+
+		</bsdf>
+	</bsdf>
+	<bsdf type="twosided" id="mat-Red_Glass">
+		<bsdf type="diffuse">
+			<!-- <rgb value="1.000000 0.015209 0.003347" name="reflectance"/> -->
+			<spectrum value="400:1.000000 500:0.015209 600:0.003347 700:0.003347 800:0.003347 900:0.003347" name="reflectance"/>
+		</bsdf>
+	</bsdf>
+	<bsdf type="twosided" id="mat-Yellow">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.799103 0.502886 0.029557" name="reflectance"/> -->
+			<spectrum value="400:0.799103 500:0.502886 600:0.029557 700:0.029557 800:0.029557 900:0.029557" name="reflectance"/>
+		</bsdf>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-RubberBand">
+		<!-- <rgb value="1.000000 0.000000 0.300000" name="reflectance"/> -->
+		<spectrum value="400:1.000000 500:0.000000 600:0.300000 700:0.300000 800:0.300000 900:0.300000" name="reflectance"/>
+	</bsdf>
+
+	<bsdf type="twosided" id="mat-Sand">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.529543 0.435094 0.248232" name="reflectance"/> -->
+			<spectrum value="400:0.529543 500:0.435094 600:0.248232 700:0.248232 800:0.248232 900:0.248232" name="reflectance"/>
+
+		</bsdf>
+	</bsdf>
+	<bsdf type="twosided" id="mat-Light_brown">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.201102 0.079997 0.034288" name="reflectance"/> -->
+			<spectrum value="400:0.201102 500:0.079997 600:0.034288 700:0.034288 800:0.034288 900:0.034288"  name="reflectance"/>
+		</bsdf>
+	</bsdf>
+	<bsdf type="twosided" id="mat-Brown">
+		<bsdf type="diffuse">
+			<!-- <rgb value="0.097587 0.040915 0.020289" name="reflectance"/> -->
+			<spectrum value="400:0.097587 500:0.040915 600:0.020289  700:0.020289 800:0.020289 900:0.020289" name="reflectance"/>
+		</bsdf>
+	</bsdf>
+    <!-- New Shapes -->
+
+	<!-- Shapes -->
+	<shape type="ply">
+	<transform name="to_world">
+        <translate x="-0.4" y="-3.7" z="-0.4"/>
+        <!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinTransitionConnector_01_02_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    	<translate x="-0.4" y="-3.7" z="-0.4"/>
+        <!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinTransitionConnector_01_02_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+        <!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinTransitionConnector_01_02_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+		<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinTransitionConnector_01_02_004.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+		<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_transparent_002.ply"/>
+		<ref id="mat-transparent" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+		<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_007.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+		<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_006.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+		<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_transparent_001.ply"/>
+		<ref id="mat-transparent" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+		<translate x="-0.4" y="-3.7" z="-0.4"/>
+		<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_01_purple_002.ply"/>
+		<ref id="mat-Red_Glass" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_01_purple_001.ply"/>
+		<ref id="mat-Red_Glass" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_round_01_01_purple_glass_001.ply"/>
+		<ref id="mat-Red_Glass" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_04_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_04_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_04_06_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_03_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_round_01_01_black_003.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_round_01_01_black_002.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_04_06_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_round_01_01_black_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_04_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_011.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_010.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_008.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_007.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_008.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_007.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_6_004.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_010.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_6_003.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_006.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_005.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_8_003.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_009.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_008.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_022.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_021.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_020.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_019.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_018.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_017.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_016.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_015.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_009.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_014.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_008.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_007.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_013.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_012.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_011.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_010.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_009.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_04_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_04_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_16_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_16_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_008.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_007.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_gray_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_005.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>	
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_004.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_gray_004.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_gray_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_003.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_002.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_gray_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_gray_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_gray_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_black_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_04_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_02_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_007.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_04_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_04_10_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_04_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_06_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_02_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_06_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_04_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_06_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_06_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_06_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_06_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_08_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_02_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_007.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_04_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_08_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_08_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/SlopeBrickInverted_02_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/SlopeBrickInverted_02_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_01_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/SlopeBrickInverted_02_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_004.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_12_002.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_04_10_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_12_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_16_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_16_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_16_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_16_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_007.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_006.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_8_002.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/RubberBand_Left_001.ply"/>
+		<ref id="mat-RubberBand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/RubberBand_Left.ply"/>
+		<ref id="mat-RubberBand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_007.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_04_12_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_04_12_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TipperEnd_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TipperEnd_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_06_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_06_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_04_004.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_010.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_030.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_029.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_009.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_011.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_010.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_8_004.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_038.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_037.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_024.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_023.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_011.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_010.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_022.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_021.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_008.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_007.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_034.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_033.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_036.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_020.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_019.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_009.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_035.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_008.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_018.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_017.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_032.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_031.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_04_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_013.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/GearRack_01_04_007.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_012.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_009.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/GearRack_01_04_005.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_008.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_04_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_006.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_06_005.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_12_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_040.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_12_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_039.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_024.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_023.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_012.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_011.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_007.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_006.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_010.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_009.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_004.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_028.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_027.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_026.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_025.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_016.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_015.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_6_006.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_6_005.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_014.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicConnector_01_02_013.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_02_02_003.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_08_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_02_02_008.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/GearRack_01_04_004.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/GearRack_01_04_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/GearRack_01_04_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/GearRack_01_04_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_002.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_m_hole_01_02_001.ply"/>
+		<ref id="mat-Yellow" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicPulleyLarge_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_005.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_005.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_24_Teeth_rounded_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_007.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicBush_01_01_005.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_005.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_10_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_24_Teeth_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/PinSmoothWithoutFrictionRidges_01_02_006.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_002.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/TechnicPulleyLarge_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_24_Teeth_rounded_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_4_003.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_006.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_8_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_24_Teeth_002.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_003.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Technic_axle_6_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_24_Teeth_001.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_08_Teeth_004.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_40_TeethLeftF.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_052.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_051.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_050.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_049.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_048.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_047.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_046.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_045.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_044.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_043.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_042.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_041.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_040.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_039.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_038.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_037.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_036.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_035.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_034.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_033.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_032.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_031.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_030.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_029.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_028.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_027.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_026.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_025.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_024.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_023.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_022.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_021.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_020.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_019.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_018.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_017.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_016.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_015.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_014.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_013.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_012.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_011.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_010.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_009.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_008.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_007.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_006.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_005.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_004.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_003.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_002.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_001.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_000.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_40_TeethLeftB.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_105.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_104.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_103.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_102.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_101.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_100.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_099.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_098.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_097.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_096.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_095.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_094.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_093.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_092.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_091.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_090.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_089.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_088.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_087.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_086.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_085.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_084.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_083.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_082.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_081.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_080.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_079.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_078.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_077.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_076.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_075.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_074.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_073.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_072.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_071.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_070.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_069.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_068.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_067.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_066.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_065.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_064.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_063.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_062.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_061.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_060.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_059.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_058.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_057.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_056.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_055.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_054.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/ChainTreadLeft_053.ply"/>
+		<ref id="mat-Black" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_40_TeethRightB.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Gear_40_TeethRightF.ply"/>
+		<ref id="mat-Gray" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/LegoPlane_huge.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_038.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_022.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_011.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_021.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_020.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_019.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_018.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_017.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_010.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_037.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_006.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_016.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_003.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_036.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_035.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_034.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_033.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_015.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_032.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_031.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_030.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_029.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_028.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_027.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_026.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_025.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_024.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_023.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_08_004.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_08_003.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_06_006.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_06_005.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_022.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_021.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_020.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_014.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_019.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_018.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_017.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_016.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_005.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_013.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_02_004.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_015.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_009.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_012.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_011.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_010.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_009.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_008.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_04_008.ply"/>
+		<ref id="mat-Brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_01_08_007.ply"/>
+		<ref id="mat-Light_brown" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_m_flatTop_01_02_014.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_02_08_002.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_014.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_013.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_012.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_011.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_010.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_009.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_008.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_007.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_006.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_005.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+    <translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_004.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+	<shape type="ply">
+	<transform name="to_world">
+	<translate x="-0.4" y="-3.7" z="-0.4"/>
+	<!--<rotate x="0" y="1" z="0" angle="90"/> -->
+</transform>
+		<string name="filename" value="meshes/Brick_flat_06_10_003.ply"/>
+		<ref id="mat-Sand" name="bsdf"/>
+	</shape>
+
+    <!-- <shape type="sphere" id="mirrorsphere"> -->
+        <!-- <transform name="to_world"> -->
+            <!-- <scale value="0.5"/> -->
+            <!-- <translate x="-0.3" y="-0.5" z="0.2"/> -->
+        <!-- </transform> -->
+        <!-- <ref id="mirror"/> -->
+    <!-- </shape> -->
+
+    <!-- <shape type="sphere" id="glasssphere"> -->
+        <!-- <transform name="to_world"> -->
+            <!-- <scale value="0.25"/> -->
+            <!-- <translate x="0.5" y="-0.75" z="-0.2"/> -->
+        <!-- </transform> -->
+        <!-- <ref id="glass"/> -->
+    <!-- </shape> -->
+</scene>
