@@ -1,3 +1,7 @@
+Here is the comprehensive README with the sample code for data generation for band 1 included:
+
+---
+
 # Spectral Data Generation using Mitsuba and TOUCAN Multispectral Camera
 
 This repository contains code and data for generating spectral data using the Mitsuba renderer and the TOUCAN Multispectral Camera. The project is organized into several Jupyter notebooks that handle different spectral bands, as well as encoded bands.
@@ -27,10 +31,6 @@ This repository contains code and data for generating spectral data using the Mi
 ├── my_first_render.png
 └── pexels-fwstudio-33348-172289.jpg
 ```
-
-## Project Overview
-
-This project aims to generate spectral data using a custom TOUCAN Multispectral Camera model in the Mitsuba renderer. The generated data spans across nine individual spectral bands, as well as three sets of encoded bands.
 
 ### Notebooks
 
@@ -98,6 +98,67 @@ plt.grid(True)
 plt.show()
 ```
 
+## Sample Code for Data Generation for Band 1
+
+The following sample code demonstrates how to generate data for band 1 using the Mitsuba renderer:
+
+```python
+import mitsuba as mi
+mi.variants()
+mi.set_variant("scalar_spectral")
+scene = mi.load_file("lego/cbox.xml")
+
+from mitsuba import ScalarTransform4f as T
+
+def load_sensor(r, phi, theta):
+    origin = T.translate([0, -1.2, 0]) @ T.rotate([0, 1, 0], phi).rotate([1, 0, 0], theta) @ mi.ScalarPoint3f([0, 0, r])
+
+    return mi.load_dict({
+        'type': 'perspective',
+        'fov': 39.37,
+        'to_world': T.look_at(
+            origin=origin,
+            target=[0, -3.7, 0],
+            up=[0, 1, 0]
+        ),
+        'sampler': {
+            'type': 'independent',
+        },
+        'film': {
+            'type': 'specfilm',
+            'width': 2000,
+            'height': 2000,
+            'band1': {
+                'type': 'spectrum',
+                'value': [(400.0, 0.01), (415.0, 0.15), (431.0, 0.36), (445.0, 0.15), (460.0, 0.01)]
+            }
+        },
+    })
+
+radius = 2
+phis = [20.0*(i+1) for i in range(10)]
+thetas = [20.0*(j+1) for j in range(10)]
+
+sensors = []
+for phi in phis:
+    for theta in thetas:
+        sensors.append(load_sensor(radius,theta,phi))
+sensor_count = len(sensors)
+
+images = [mi.render(scene, spp=512, sensor=sensor) for sensor in sensors]
+
+import os
+folder_name = "rendered_images"
+
+os.makedirs(folder_name, exist_ok=True)
+
+for i, image in enumerate(images):
+    filename = f"{folder_name}/view_{i+1:04d}.png"
+    mi.util.write_bitmap(filename, image)
+    
+print(f"Rendered images saved to: {folder_name}")
+```
+
 ## Usage
 
 1. **Clone the repository**:
@@ -105,7 +166,7 @@ plt.show()
    git clone https://github.com/your-username/your-repo-name.git
    ```
 2. **Install required dependencies**:
-   Ensure you have Jupyter Notebook and the necessary Python libraries installed (e.g., `matplotlib`, `numpy`).
+   Ensure you have Jupyter Notebook and the necessary Python libraries installed (e.g., `matplotlib`, `numpy`, `mitsuba`).
 
 3. **Navigate through the Jupyter notebooks**:
    Open and run the Jupyter notebooks to generate the spectral data for different bands.
