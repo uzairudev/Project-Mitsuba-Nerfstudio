@@ -1,10 +1,8 @@
-# Spectral Data Generation using Mitsuba and TOUCAN Multispectral Camera
+# Spectral Data Generation using Mitsuba and Training Using Splatfactor.
 
-This repository contains code and data for generating spectral data using the Mitsuba renderer and the TOUCAN Multispectral Camera. The project is organized into several Jupyter notebooks that handle different spectral bands, as well as encoded bands.
-
+This repository contains code for generating spectral data (Inidividual and Encoded) using the Mitsuba 3, the spectral sensitivity curve and code for modifying the model to extract different bands and comparison for analysis.
 
 ## Repository Structure
-
 ```
 .
 ├── Splatfactor/
@@ -39,7 +37,6 @@ This repository contains code and data for generating spectral data using the Mi
 ```
 
 ### Notebooks
-
 - **Gaussian-like-curve.ipynb**: Plots the sensitivity of the TOUCAN Multispectral Camera for bands 1 to 9.
 - **mitsuba_Encoded1.ipynb**: Generates data for encoded bands 1-3.
 - **mitsuba_Encoded2.ipynb**: Generates data for encoded bands 4-6.
