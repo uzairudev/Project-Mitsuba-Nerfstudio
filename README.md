@@ -1,7 +1,3 @@
-Here is the comprehensive README with the sample code for data generation for band 1 included:
-
----
-
 # Spectral Data Generation using Mitsuba and TOUCAN Multispectral Camera
 
 This repository contains code and data for generating spectral data using the Mitsuba renderer and the TOUCAN Multispectral Camera. The project is organized into several Jupyter notebooks that handle different spectral bands, as well as encoded bands.
@@ -178,4 +174,3 @@ print(f"Rendered images saved to: {folder_name}")
 ## Acknowledgements
 
 - [Mitsuba Renderer](https://www.mitsuba-renderer.org/) for providing the rendering framework.
-- The authors of any referenced images or code snippets used in this project.
