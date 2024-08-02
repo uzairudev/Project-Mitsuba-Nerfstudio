@@ -32,7 +32,6 @@ This repository contains code for generating spectral data (Inidividual and Enco
 ├── mitsuba_band8.ipynb
 ├── mitsuba_band9.ipynb
 ├── mitsubaspectral.ipynb
-├── my_first_render.png
 └── pexels-fwstudio-33348-172289.jpg
 ```
 
@@ -51,7 +50,6 @@ This repository contains code for generating spectral data (Inidividual and Enco
 - **mitsuba_band7.ipynb**: Generates data for individual spectral band 7.
 - **mitsuba_band8.ipynb**: Generates data for individual spectral band 8.
 - **mitsuba_band9.ipynb**: Generates data for individual spectral band 9.
-- **mitsubaspectral.ipynb**: A general notebook for spectral data generation.
 
 ### Additional Files
 
@@ -67,7 +65,7 @@ This repository contains code for generating spectral data (Inidividual and Enco
 - **pexels-fwstudio-33348-172289.jpg**: Image used as a background texture for the LEGO model.
 
 ### `extracted_blue.py`, `extracted_green.py`, `extracted_red.py`
-These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate the individual color channels separately.
+These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate the individual bands separately.
 
 ### `first_sample.pth` and `second_sample.pth`
 These files contain PyTorch tensor data for the first and second samples used for evaluation. They are loaded and compared using the `new_eval.py` script.
@@ -179,7 +177,7 @@ print(f"Rendered images saved to: {folder_name}")
 
 ### Replicate the R Channel in B and G Channels for Both Ground Truth and Predicted Images
 
-In the `splatfacto.py` file, there is a method that replicates the R channel in the B and G channels for both ground truth and predicted images. This is done to facilitate certain image quality assessments and visualizations.
+In the `splatfacto.py` file, there is a method that replicates the R channel in the B and G channels for both ground truth and predicted images. This is done to facilitate certain image quality assessments and evaluation.
 
 Here is the relevant function with the corresponding extraction logic:
 
@@ -279,23 +277,6 @@ for i, value in enumerate(values):
 plt.show()
 ```
 
-## Usage
-
-1. **Clone the repository**:
-   ```sh
-   git clone https://github.com/your-username/your-repo-name.git
-   ```
-2. **Install required dependencies**:
-   Ensure you have Jupyter Notebook and the necessary Python libraries installed (e.g., `matplotlib`, `numpy`, `mitsuba`, `torch`, `pytorch-msssim`, `torchmetrics`).
-
-3. **Navigate through the Jupyter notebooks**:
-   Open and run the Jupyter notebooks to generate the spectral data for different bands.
-
-4. **Render the scenes**:
-   Use Mitsuba to render the scenes specified in the `lego/cbox.xml` file using the spectral sensitivity settings.
-
-5. **Run the evaluation script**:
-   Use the `new_eval.py` script to compare the two samples using PSNR, SSIM, and LPIPS metrics.
 
 
 ## Acknowledgements
