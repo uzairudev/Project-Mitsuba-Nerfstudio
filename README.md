@@ -233,7 +233,7 @@ This method:
 ## Sample Code For Comparing only the predicted output as saved Tensors for Band1 and Band1_Extracted
 The  `new_eval.py` script is used to compare two samples (both predicted) for two different training instance (Band1 and Band1_Extracted) stored in `first_sample.pth` and `second_sample.pth` using three image quality metrics: PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index Measure), and LPIPS (Learned Perceptual Image Patch Similarity). The script computes the metrics for similarity between the two samples, and visualizes the results.
 
-Here is the `new_eval.py` script:
+This is the `new_eval.py` script:
 
 ```python
 import torch
