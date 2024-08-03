@@ -280,7 +280,7 @@ plt.show()
 ```
 While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. Computing the metrics against the groundtruth is the traditional practice. However, to ascertain the efficiency of the of the approach, I create a custome code and saved the predicte_image from the model for both the Band1 and Band1_extracted and computed the similarity for these tensors. 
 
-![Description of the image](path/to/image)
+![Description of the image](Comparison.png)
 
 
 
