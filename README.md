@@ -276,13 +276,15 @@ for i, value in enumerate(values):
 plt.show()
 
 ```
-While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. The primary reason for this is that PSNR and SSIM is traditionally used to measure the fidelity of a reconstructed image with respect to a ground truth reference. Computing the metrics against the groundtruth is the traditional practice. To ascertain the efficiency of the of the approach, I first computed the similarity using the traditional (Groundtruth and predicted) method and compared resulting values which was resulted in a very good performance. Additionally, create a custome code and saved the predicte_image from the model for both the Band1 and Band1_extracted and computed the similarity for these tensors. 
+While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. The primary reason for this is that PSNR and SSIM is traditionally used to measure the fidelity of a reconstructed image with respect to a ground truth reference. Computing the metrics against the groundtruth is the traditional practice. To ascertain the efficiency  of the implemented approach, I first computed the similarity using the traditional method (Groundtruth and predicted) for both Band1 and Band1_extracted and compared resulting values which was resulted in a very good performance. Additionally, I created a custom code `new_eval.py` and saved only the predicte_image from the model for both the Band1 and Band1_extracted and computed the similarity for these tensors. The image below shows the result using the custome code which very comparable with the traditional method used. 
 
 ![Description of the image](Comparison.png)
 
 1. The first tensor resulting value correspond to the PSNR
 2. The second tensor resulting value correspond to the SSIM
 3. The third tensor resulting value correspond to the LPIPS
+
+Overall, the results has concluded the efficiency of encoding much better than training individual spectral bands. 
 
 ## Acknowledgements
 
