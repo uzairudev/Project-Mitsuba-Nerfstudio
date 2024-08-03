@@ -175,9 +175,9 @@ print(f"Rendered images saved to: {folder_name}")
 
 ### Replicate the R Channel in B and G Channels for Both Ground Truth and Predicted Images
 
-In the `extracted_red.py` file, the method that replicates the R channel in the B and G channels for both ground truth and predicted images is presented. This is done to facilitate certain image quality assessments and evaluation.
+In the `extracted_red.py` file, the method that replicates the R channel in the B and G channels for both ground truth and predicted images is presented. This is done to facilitate certain image quality assessments and evaluation. 
 
-Here is the relevant function with the corresponding extraction logic:
+This is the relevant function with the corresponding extraction logic for R values in B and G. 
 
 ```python
 def get_image_metrics_and_images(
