@@ -274,7 +274,7 @@ for i, value in enumerate(values):
 
 plt.show()
 ```
-While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. The primary reason for this is that PSNR and SSIM is traditionally used to measure the fidelity of a reconstructed image with respect to a ground truth reference. When both images are reconstructions or predictions, there is no absolute reference to determine the true quality of either image, making PSNR less meaningful in this context.
+While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. Computing the metrics against the groundtruth is the traditional practice. However, to ascertain the efficiency of the 
 
 
 ## Acknowledgements
