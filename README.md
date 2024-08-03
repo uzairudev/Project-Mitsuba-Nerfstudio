@@ -1,6 +1,6 @@
 # Spectral Data Generation using Mitsuba and Training Using Splatfacto.
 
-This repository contains code for generating spectral data (Inidividual and Encoded) using the Mitsuba 3, the spectral sensitivity curve and code for modifying the model to extract different bands and comparison for analysis.
+This repository contains code for generating spectral data (Inidividual and Encoded) using Mitsuba 3, the camera  spectral sensitivity curve as well as code for modifying the model to extract different bands and comparison for analysis.
 
 ## Repository Structure
 ```
