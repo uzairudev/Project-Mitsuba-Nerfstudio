@@ -1,4 +1,4 @@
-# Spectral Data Generation using Mitsuba and Training Using Splatfactor.
+# Spectral Data Generation using Mitsuba and Training Using Splatfacto.
 
 This repository contains code for generating spectral data (Inidividual and Encoded) using the Mitsuba 3, the spectral sensitivity curve and code for modifying the model to extract different bands and comparison for analysis.
 
@@ -39,7 +39,7 @@ This repository contains code for generating spectral data (Inidividual and Enco
 - **mitsuba_Encoded1.ipynb**: Generates data for encoded bands 1-3.
 - **mitsuba_Encoded2.ipynb**: Generates data for encoded bands 4-6.
 - **mitsuba_Encoded3.ipynb**: Generates data for encoded bands 7-9.
-- **mitsuba_RGB.ipynb**: Handles RGB rendering.
+- **mitsuba_RGB.ipynb**: Handles Standard RGB rendering.
 - **mitsuba_band1.ipynb**: Generates data for individual spectral band 1.
 - **mitsuba_band2.ipynb**: Generates data for individual spectral band 2.
 - **mitsuba_band3.ipynb**: Generates data for individual spectral band 3.
@@ -224,7 +224,7 @@ def get_image_metrics_and_images(
 ```
 
 This method:
-1. Extracts the red (R) channel from the ground truth and predicted images.
+1. Extracts the red (R) channel from the ground truth and predicted images
 2. Replicates the R channel across the green (G) and blue (B) channels.
 3. Combines the ground truth and predicted images side-by-side.
 4. Computes PSNR, SSIM, and LPIPS metrics for the images.
@@ -276,7 +276,7 @@ for i, value in enumerate(values):
 plt.show()
 
 ```
-While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. The primary reason for this is that PSNR and SSIM is traditionally used to measure the fidelity of a reconstructed image with respect to a ground truth reference. Computing the metrics against the groundtruth is the traditional practice. To ascertain the efficiency  of the implemented approach, I first computed the similarity using the traditional method (Groundtruth and predicted) for both Band1 and Band1_extracted and compared resulting metrics values which shows a very good performance. Additionally, I created a custom code `new_eval.py` and saved only the predicte_image from the model for both the Band1 and Band1_extracted and computed the similarity for these tensors. The image below shows the result using the custom code which very comparable results with the traditional method used. 
+While computing PSNR and SSIM between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. The primary reason for this is that PSNR and SSIM is traditionally used to measure the fidelity of a reconstructed image with respect to a ground truth reference. Computing the metrics against the groundtruth is the traditional practice. To ascertain the efficiency  of the implemented approach, I first computed the similarity using the traditional method (Groundtruth and predicted) for both Band1 and Band1_extracted and compared resulting metrics values which shows a very good performance. Additionally, I created a custom code `new_eval.py` and saved only the predicte_image from the model for both the Band1 and Band1_extracted separately and computed the similarity for these tensors. The image below shows the result using the custom code which are very comparable results with the traditional method used. 
 
 ![Description of the image](Comparison.png)
 
@@ -284,9 +284,9 @@ While computing PSNR between two predicted or reconstructed images is technicall
 2. The second tensor resulting value correspond to the SSIM
 3. The third tensor resulting value correspond to the LPIPS
 
-Overall, the results has concluded the efficiency of encoding much better than training individual spectral bands in all possible scenario
+Overall, the results obtained has concluded the efficiency of encoding much better than training individual spectral bands in all possible scenario
 
 ## Acknowledgements
 
 - [Mitsuba Renderer](https://www.mitsuba-renderer.org/) for providing the rendering framework.
-- [Nerfstudio](https://docs.nerf.studio/) for providing the foundational code and concepts used in the `splatfacto.py` implementation.
+- [Nerfstudio](https://docs.nerf.studio/) for providing the foundational code and concepts used in the above implementation.
