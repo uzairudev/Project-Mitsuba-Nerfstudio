@@ -4,8 +4,9 @@ from torchmetrics.image import PeakSignalNoiseRatio
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 import matplotlib.pyplot as plt
 
-#torch.save(tensor, 'first_sample.pth')
-#torch.save(tensor, 'second_sample.pth')
+
+# torch.save(predicted_rgb, 'first_sample.pth')
+# torch.save(predicted_rgb, 'second_sample.pth')
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
