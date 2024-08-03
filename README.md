@@ -244,7 +244,7 @@ from torchmetrics.image import PeakSignalNoiseRatio
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 import matplotlib.pyplot as plt
 
-
+# Used in the model to save the predicted image to a tensor file.
 # torch.save(predicted_rgb, 'first_sample.pth')
 # torch.save(predicted_rgb, 'second_sample.pth')
 
