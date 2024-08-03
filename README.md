@@ -232,8 +232,8 @@ This method:
 4. Computes PSNR, SSIM, and LPIPS metrics for the images.
 
 
-## Sample Code For Comparing only the predicted output as saved Tensors 
-The  `new_eval.py` script is used to compare two samples (both predicted) for two different training instance (stored in `first_sample.pth` and `second_sample.pth`) using three image quality metrics: PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index Measure), and LPIPS (Learned Perceptual Image Patch Similarity). The script loads the samples, computes the metrics, and visualizes the results.
+## Sample Code For Comparing only the predicted output as saved Tensors for Band1 and Band1_Extracted
+The  `new_eval.py` script is used to compare two samples (both predicted) for two different training instance (Band1 and Band1_Extracted) stored in `first_sample.pth` and `second_sample.pth` using three image quality metrics: PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index Measure), and LPIPS (Learned Perceptual Image Patch Similarity). The script computes the metrics for similarity between the two samples, and visualizes the results.
 
 Here is the `new_eval.py` script:
 
@@ -244,37 +244,44 @@ from torchmetrics.image import PeakSignalNoiseRatio
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 import matplotlib.pyplot as plt
 
+# Used in the model to save the predicted image to a tensor file.
+# torch.save(predicted_rgb, 'first_sample.pth')
+# torch.save(predicted_rgb, 'second_sample.pth')
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Load samples
 first_sample = torch.load('first_sample.pth', weights_only=True).to(device)
 second_sample = torch.load('second_sample.pth', weights_only=True).to(device)
+# second_sample = torch.load('first_sample.pth', weights_only=True).to(device)
 
-# Initialize metrics
 psnr = PeakSignalNoiseRatio(data_range=1.0).to(device)
-ssim = SSIM(data_range=1.0, size_average=True, channel=3).to(device)
+ssim = SSIM(data_range=1.0, size_average=True, channel=3)
 lpips = LearnedPerceptualImagePatchSimilarity(normalize=True).to(device)
 
-# Compute metrics
 psnr_value = psnr(first_sample, second_sample)
 ssim_value = ssim(first_sample, second_sample)
 lpips_value = lpips(first_sample, second_sample)
 
-# Plot results
 metrics = ['PSNR', 'SSIM', 'LPIPS']
-values = [psnr_value.item(), ssim_value.item(), lpips_value.item()]
+values = [psnr_value, ssim_value, lpips_value]
 
-plt.bar(metrics, values)
 plt.title('Comparison of PSNR, SSIM, and LPIPS Metrics')
 plt.xlabel('Metrics')
 plt.ylabel('Values')
 
+from pprint import pprint
+
 for i, value in enumerate(values):
     plt.text(i, value + 0.05, f'{value:.2f}', ha='center')
+    pprint(value)
 
 plt.show()
+
 ```
-While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. Computing the metrics against the groundtruth is the traditional practice. However, to ascertain the efficiency of the 
+While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. Computing the metrics against the groundtruth is the traditional practice. However, to ascertain the efficiency of the of the approach, I create a custome code and saved the predicte_image from the model for both the Band1 and Band1_extracted and computed the similarity for these tensors. 
+
+![Description of the image](Comparison.png)
+
 
 
 
