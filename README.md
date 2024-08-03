@@ -277,6 +277,7 @@ plt.show()
 While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. Computing the metrics against the groundtruth is the traditional practice. However, to ascertain the efficiency of the 
 
 
+
 ## Acknowledgements
 
 - [Mitsuba Renderer](https://www.mitsuba-renderer.org/) for providing the rendering framework.
