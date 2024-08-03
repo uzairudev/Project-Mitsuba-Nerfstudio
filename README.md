@@ -63,7 +63,7 @@ This repository contains code for generating spectral data (Inidividual and Enco
 - **pexels-fwstudio-33348-172289.jpg**: Image used as a background texture for the LEGO model.
 
 ### `extracted_blue.py`, `extracted_green.py`, `extracted_red.py`
-These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate the individual bands separately.
+These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate separate band extractions.
 
 ### `first_sample.pth` and `second_sample.pth`
 These files contain PyTorch tensor data for the first and second samples used for evaluation. They are loaded and compared using the `new_eval.py` script.
