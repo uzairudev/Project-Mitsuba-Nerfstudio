@@ -1,11 +1,18 @@
-# Spectral Data Generation using Mitsuba and TOUCAN Multispectral Camera
+# Spectral Data Generation using Mitsuba and Training Using Splatfactor.
 
-This repository contains code and data for generating spectral data using the Mitsuba renderer and the TOUCAN Multispectral Camera. The project is organized into several Jupyter notebooks that handle different spectral bands, as well as encoded bands.
+This repository contains code for generating spectral data (Inidividual and Encoded) using the Mitsuba 3, the spectral sensitivity curve and code for modifying the model to extract different bands and comparison for analysis.
 
 ## Repository Structure
-
 ```
 .
+├── Splatfactor/
+│   ├── extracted_blue.py
+│   ├── extracted_green.py
+│   ├── extracted_red.py
+│   ├── first_sample.pth
+│   ├── new_eval.py
+│   ├── second_sample.pth
+├── _MACOSX/lego/
 ├── lego/
 │   ├── cbox.xml
 │   ├── [Lego meshes and textures]
@@ -24,12 +31,10 @@ This repository contains code and data for generating spectral data using the Mi
 ├── mitsuba_band8.ipynb
 ├── mitsuba_band9.ipynb
 ├── mitsubaspectral.ipynb
-├── my_first_render.png
 └── pexels-fwstudio-33348-172289.jpg
 ```
 
 ### Notebooks
-
 - **Gaussian-like-curve.ipynb**: Plots the sensitivity of the TOUCAN Multispectral Camera for bands 1 to 9.
 - **mitsuba_Encoded1.ipynb**: Generates data for encoded bands 1-3.
 - **mitsuba_Encoded2.ipynb**: Generates data for encoded bands 4-6.
@@ -44,16 +49,26 @@ This repository contains code and data for generating spectral data using the Mi
 - **mitsuba_band7.ipynb**: Generates data for individual spectral band 7.
 - **mitsuba_band8.ipynb**: Generates data for individual spectral band 8.
 - **mitsuba_band9.ipynb**: Generates data for individual spectral band 9.
-- **mitsubaspectral.ipynb**: A general notebook for spectral data generation.
 
 ### Additional Files
 
+- **Splatfactor/**:
+  - **extracted_blue.py**: Extracts and processes the blue channel data.
+  - **extracted_green.py**: Extracts and processes the green channel data.
+  - **extracted_red.py**: Extracts and processes the red channel data.
+  - **first_sample.pth**: PyTorch tensor file containing the first sample.
+  - - **second_sample.pth**: PyTorch tensor file containing the second sample.
+  - **new_eval.py**: Evaluation script to compare two samples using PSNR, SSIM, and LPIPS metrics.
 - **lego/**: Contains the `cbox.xml` scene file, along with all necessary Lego meshes and textures for rendering.
-- **my_first_render.png**: Example render image.
-- **pexels-fwstudio-33348-172289.jpg**: Reference image used in the project.
+- **pexels-fwstudio-33348-172289.jpg**: Image used as a background texture for the LEGO model.
+
+### `extracted_blue.py`, `extracted_green.py`, `extracted_red.py`
+These scripts extract and process the color channel data for blue, green, and red, respectively. They are used to analyze and manipulate the individual bands separately.
+
+### `first_sample.pth` and `second_sample.pth`
+These files contain PyTorch tensor data for the first and second samples used for evaluation. They are loaded and compared using the `new_eval.py` script.
 
 ## Spectral Sensitivity Curve
-
 The spectral sensitivity of the TOUCAN Multispectral Camera is defined by a set of Gaussian functions representing different spectral bands. The following Python code in `Gaussian-like-curve.ipynb` generates and plots these sensitivity curves:
 
 ```python
@@ -155,22 +170,114 @@ for i, image in enumerate(images):
 print(f"Rendered images saved to: {folder_name}")
 ```
 
-## Usage
 
-1. **Clone the repository**:
-   ```sh
-   git clone https://github.com/your-username/your-repo-name.git
-   ```
-2. **Install required dependencies**:
-   Ensure you have Jupyter Notebook and the necessary Python libraries installed (e.g., `matplotlib`, `numpy`, `mitsuba`).
+## Sample Code For Extracted different Bands from the Model. 
 
-3. **Navigate through the Jupyter notebooks**:
-   Open and run the Jupyter notebooks to generate the spectral data for different bands.
+### Replicate the R Channel in B and G Channels for Both Ground Truth and Predicted Images
 
-4. **Render the scenes**:
-   Use Mitsuba to render the scenes specified in the `lego/cbox.xml` file using the spectral sensitivity settings.
+In the `splatfacto.py` file, the method that replicates the R channel in the B and G channels for both ground truth and predicted images is presented. This is done to facilitate certain image quality assessments and evaluation.
+
+Here is the relevant function with the corresponding extraction logic:
+
+```python
+def get_image_metrics_and_images(
+    self, outputs: Dict[str, torch.Tensor], batch: Dict[str, torch.Tensor]
+) -> Tuple[Dict[str, float], Dict[str, torch.Tensor]]:
+    """Writes the test image outputs.
+
+    Args:
+        image_idx: Index of the image.
+        step: Current step.
+        batch: Batch of data.
+        outputs: Outputs of the model.
+
+    Returns:
+        A dictionary of metrics.
+    """
+    gt_rgb = self.composite_with_background(self.get_gt_img(batch["image"]), outputs["background"])
+    predicted_rgb = outputs["rgb"]
+
+    # Replicate the R channel in B and G channels for both ground truth and predicted images
+    gt_rgb_r = gt_rgb[:, :, 0:1]  # Extract R channel
+    gt_rgb = torch.cat([gt_rgb_r, gt_rgb_r, gt_rgb_r], dim=2)  # Replicate R channel into G and B
+
+    predicted_rgb_r = predicted_rgb[:, :, 0:1]  # Extract R channel
+    predicted_rgb = torch.cat([predicted_rgb_r, predicted_rgb_r, predicted_rgb_r], dim=2)  # Replicate R channel into G and B
+
+    combined_rgb = torch.cat([gt_rgb, predicted_rgb], dim=1)
+
+    # Switch images from [H, W, C] to [1, C, H, W] for metrics computations
+    gt_rgb = torch.moveaxis(gt_rgb, -1, 0)[
+
+None, ...]
+    predicted_rgb = torch.moveaxis(predicted_rgb, -1, 0)[None, ...]
+
+    psnr = self.psnr(gt_rgb, predicted_rgb)
+    ssim = self.ssim(gt_rgb, predicted_rgb)
+    lpips = self.lpips(gt_rgb, predicted_rgb)
+
+    # all of these metrics will be logged as scalars
+    metrics_dict = {"psnr": float(psnr.item()), "ssim": float(ssim)}  # type: ignore
+    metrics_dict["lpips"] = float(lpips)
+
+    images_dict = {"img": combined_rgb}
+
+    return metrics_dict, images_dict
+```
+
+This method:
+1. Extracts the red (R) channel from the ground truth and predicted images.
+2. Replicates the R channel across the green (G) and blue (B) channels.
+3. Combines the ground truth and predicted images side-by-side.
+4. Computes PSNR, SSIM, and LPIPS metrics for the images.
+
+
+## Sample Code For Comparing only the predicted output as saved Tensors 
+The  `new_eval.py` script is used to compare two samples (both predicted) for two different training instance (stored in `first_sample.pth` and `second_sample.pth`) using three image quality metrics: PSNR (Peak Signal-to-Noise Ratio), SSIM (Structural Similarity Index Measure), and LPIPS (Learned Perceptual Image Patch Similarity). The script loads the samples, computes the metrics, and visualizes the results.
+
+Here is the `new_eval.py` script:
+
+```python
+import torch
+from pytorch_msssim import SSIM
+from torchmetrics.image import PeakSignalNoiseRatio
+from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
+import matplotlib.pyplot as plt
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Load samples
+first_sample = torch.load('first_sample.pth', weights_only=True).to(device)
+second_sample = torch.load('second_sample.pth', weights_only=True).to(device)
+
+# Initialize metrics
+psnr = PeakSignalNoiseRatio(data_range=1.0).to(device)
+ssim = SSIM(data_range=1.0, size_average=True, channel=3).to(device)
+lpips = LearnedPerceptualImagePatchSimilarity(normalize=True).to(device)
+
+# Compute metrics
+psnr_value = psnr(first_sample, second_sample)
+ssim_value = ssim(first_sample, second_sample)
+lpips_value = lpips(first_sample, second_sample)
+
+# Plot results
+metrics = ['PSNR', 'SSIM', 'LPIPS']
+values = [psnr_value.item(), ssim_value.item(), lpips_value.item()]
+
+plt.bar(metrics, values)
+plt.title('Comparison of PSNR, SSIM, and LPIPS Metrics')
+plt.xlabel('Metrics')
+plt.ylabel('Values')
+
+for i, value in enumerate(values):
+    plt.text(i, value + 0.05, f'{value:.2f}', ha='center')
+
+plt.show()
+```
+While computing PSNR between two predicted or reconstructed images is technically feasible, it is not a common practice in the field of 3D reconstruction or image processing. Computing the metrics against the groundtruth is the traditional practice. However, to ascertain the efficiency of the 
 
 
 ## Acknowledgements
 
 - [Mitsuba Renderer](https://www.mitsuba-renderer.org/) for providing the rendering framework.
+- [Nerfstudio](https://docs.nerf.studio/) for providing the foundational code and concepts used in the `splatfacto.py` implementation.
