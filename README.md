@@ -57,7 +57,7 @@ This repository contains code for generating spectral data (Inidividual and Enco
   - **extracted_green.py**: Extracts and processes the green channel data.
   - **extracted_red.py**: Extracts and processes the red channel data.
   - **first_sample.pth**: PyTorch tensor file containing the first sample.
-  - - **second_sample.pth**: PyTorch tensor file containing the second sample.
+  - **second_sample.pth**: PyTorch tensor file containing the second sample.
   - **new_eval.py**: Evaluation script to compare two samples using PSNR, SSIM, and LPIPS metrics.
 - **lego/**: Contains the `cbox.xml` scene file, along with all necessary Lego meshes and textures for rendering.
 - **pexels-fwstudio-33348-172289.jpg**: Image used as a background texture for the LEGO model.
