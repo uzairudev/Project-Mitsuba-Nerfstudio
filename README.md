@@ -4,7 +4,7 @@ This repository contains code for generating spectral data (Inidividual and Enco
 
 ## Repository Structure
 ```
-.
+
 ├── Splatfactor/
 │   ├── extracted_blue.py
 │   ├── extracted_green.py
