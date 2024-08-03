@@ -171,11 +171,11 @@ print(f"Rendered images saved to: {folder_name}")
 ```
 
 
-## Sample Code For Extracted different Bands from the Model. 
+## Sample Code For Extracting different Bands from the Model. 
 
 ### Replicate the R Channel in B and G Channels for Both Ground Truth and Predicted Images
 
-In the `splatfacto.py` file, the method that replicates the R channel in the B and G channels for both ground truth and predicted images is presented. This is done to facilitate certain image quality assessments and evaluation.
+In the `extracted_red.py` file, the method that replicates the R channel in the B and G channels for both ground truth and predicted images is presented. This is done to facilitate certain image quality assessments and evaluation.
 
 Here is the relevant function with the corresponding extraction logic:
 
