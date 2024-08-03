@@ -926,7 +926,7 @@ class SplatfactoModel(Model):
         # Replicate the R channel in B and G channels for both ground truth and predicted images
         gt_rgb_r = gt_rgb[:, :, 0:1]  # Extract R channel
         gt_rgb = torch.cat([gt_rgb_r, gt_rgb_r, gt_rgb_r], dim=2)  # Replicate R channel into G and B
-
+        
         predicted_rgb_r = predicted_rgb[:, :, 0:1]  # Extract R channel
         predicted_rgb = torch.cat([predicted_rgb_r, predicted_rgb_r, predicted_rgb_r], dim=2)  # Replicate R channel into G and B
 
